@@ -91,7 +91,6 @@ c_type arch_atomic##prefix##_fetch_##op##_relaxed(c_type i,		\
 					     atomic##prefix##_t *v)	\
 {									\
 	register c_type ret;	\
-							\
 	__asm__ __volatile__ (						\
 		"	amo" #asm_op "." #asm_type " %1, %2, %0"	\
 		: "+A" (v->counter), "=r" (ret)				\
@@ -313,10 +312,13 @@ static __always_inline bool arch_atomic_inc_unless_negative(atomic_t *v)
 	int prev, rc;
 
 	__asm__ __volatile__ (
-		"	lw        %[p],  %[c]\n"
+		"0:	lr.w      %[p],  %[c]\n"
+		"	bltz      %[p],  1f\n"
 		"	addi      %[rc], %[p], 1\n"
-		"	sw        %[rc], %[c]\n"
+		"	sc.w.rl   %[rc], %[rc], %[c]\n"
+		"	bnez      %[rc], 0b\n"
 		"	fence     rw, rw\n"
+		"1:\n"
 		: [p]"=&r" (prev), [rc]"=&r" (rc), [c]"+A" (v->counter)
 		:
 		: "memory");
@@ -330,10 +332,13 @@ static __always_inline bool arch_atomic_dec_unless_positive(atomic_t *v)
 	int prev, rc;
 
 	__asm__ __volatile__ (
-		"	lw        %[p],  %[c]\n"
+		"0:	lr.w      %[p],  %[c]\n"
+		"	bgtz      %[p],  1f\n"
 		"	addi      %[rc], %[p], -1\n"
-		"	sw        %[rc], %[c]\n"
+		"	sc.w.rl   %[rc], %[rc], %[c]\n"
+		"	bnez      %[rc], 0b\n"
 		"	fence     rw, rw\n"
+		"1:\n"
 		: [p]"=&r" (prev), [rc]"=&r" (rc), [c]"+A" (v->counter)
 		:
 		: "memory");
