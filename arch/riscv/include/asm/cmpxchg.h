@@ -19,7 +19,8 @@
 	switch (size) {							\
 	case 4:								\
 		__asm__ __volatile__ (					\
-			"	amoswap.w %0, %2, %1\n"			\
+            "   lw %0, %1\n"             \
+            "   sw %2, 0(%1)\n"             \
 			: "=r" (__ret), "+A" (*__ptr)			\
 			: "r" (__new)					\
 			: "memory");					\
@@ -52,7 +53,8 @@
 	switch (size) {							\
 	case 4:								\
 		__asm__ __volatile__ (					\
-			"	amoswap.w %0, %2, %1\n"			\
+            "   lw %0, %1\n"             \
+            "   sw %2, 0(%1)\n"             \
 			RISCV_ACQUIRE_BARRIER				\
 			: "=r" (__ret), "+A" (*__ptr)			\
 			: "r" (__new)					\
@@ -88,7 +90,8 @@
 	case 4:								\
 		__asm__ __volatile__ (					\
 			RISCV_RELEASE_BARRIER				\
-			"	amoswap.w %0, %2, %1\n"			\
+            "   lw %0, %1\n"             \
+            "   sw %2, 0(%1)\n"             \
 			: "=r" (__ret), "+A" (*__ptr)			\
 			: "r" (__new)					\
 			: "memory");					\
@@ -122,7 +125,8 @@
 	switch (size) {							\
 	case 4:								\
 		__asm__ __volatile__ (					\
-			"	amoswap.w.aqrl %0, %2, %1\n"		\
+            "   lw %0, %1\n"             \
+            "   sw %2, 0(%1)\n"             \
 			: "=r" (__ret), "+A" (*__ptr)			\
 			: "r" (__new)					\
 			: "memory");					\
@@ -173,13 +177,10 @@
 	switch (size) {							\
 	case 4:								\
 		__asm__ __volatile__ (					\
-			"0:	lr.w %0, %2\n"				\
-			"	bne  %0, %z3, 1f\n"			\
-			"	sc.w %1, %z4, %2\n"			\
-			"	bnez %1, 0b\n"				\
-			"1:\n"						\
-			: "=&r" (__ret), "=&r" (__rc), "+A" (*__ptr)	\
-			: "rJ" ((long)__old), "rJ" (__new)		\
+			"	lw %0, %2\n"				\
+			"	sw %z4, 0(%2)\n"			\
+			: "=&r" (__ret), "+A" (*__ptr)	\
+			: "rJ" (__ptr), "rJ" (__old), "rJ" (__new)	\
 			: "memory");					\
 		break;							\
 	case 8:								\
@@ -217,14 +218,11 @@
 	switch (size) {							\
 	case 4:								\
 		__asm__ __volatile__ (					\
-			"0:	lr.w %0, %2\n"				\
-			"	bne  %0, %z3, 1f\n"			\
-			"	sc.w %1, %z4, %2\n"			\
-			"	bnez %1, 0b\n"				\
+			"	lw %0, %2\n"				\
+			"	sw %z4, 0(%2)\n"			\
 			RISCV_ACQUIRE_BARRIER				\
-			"1:\n"						\
-			: "=&r" (__ret), "=&r" (__rc), "+A" (*__ptr)	\
-			: "rJ" ((long)__old), "rJ" (__new)		\
+			: "=&r" (__ret), "+A" (*__ptr)	\
+			: "rJ" (__ptr), "rJ" (__old), "rJ" (__new)	\
 			: "memory");					\
 		break;							\
 	case 8:								\
@@ -264,13 +262,10 @@
 	case 4:								\
 		__asm__ __volatile__ (					\
 			RISCV_RELEASE_BARRIER				\
-			"0:	lr.w %0, %2\n"				\
-			"	bne  %0, %z3, 1f\n"			\
-			"	sc.w %1, %z4, %2\n"			\
-			"	bnez %1, 0b\n"				\
-			"1:\n"						\
-			: "=&r" (__ret), "=&r" (__rc), "+A" (*__ptr)	\
-			: "rJ" ((long)__old), "rJ" (__new)		\
+			"	lw %0, %2\n"				\
+			"	sw %z4, 0(%2)\n"			\
+			: "=&r" (__ret), "+A" (*__ptr)	\
+			: "rJ" (__ptr), "rJ" (__old), "rJ" (__new)	\
 			: "memory");					\
 		break;							\
 	case 8:								\
@@ -309,14 +304,11 @@
 	switch (size) {							\
 	case 4:								\
 		__asm__ __volatile__ (					\
-			"0:	lr.w %0, %2\n"				\
-			"	bne  %0, %z3, 1f\n"			\
-			"	sc.w.rl %1, %z4, %2\n"			\
-			"	bnez %1, 0b\n"				\
+			"	lw %0, %2\n"				\
+			"	sw %z4, 0(%2)\n"			\
 			"	fence rw, rw\n"				\
-			"1:\n"						\
-			: "=&r" (__ret), "=&r" (__rc), "+A" (*__ptr)	\
-			: "rJ" ((long)__old), "rJ" (__new)		\
+			: "=&r" (__ret), "+A" (*__ptr)	\
+			: "rJ" (__ptr), "rJ" (__old), "rJ" (__new)	\
 			: "memory");					\
 		break;							\
 	case 8:								\
