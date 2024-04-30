@@ -43,23 +43,23 @@ arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
 
 	switch (op) {
 	case FUTEX_OP_SET:
-		__futex_atomic_op("lw %[ov], %[u] \n sw %z[op], 0(%[u])",
+		__futex_atomic_op("lw %[ov], %[u] \n sw %z[op], %[u]",
 				  ret, oldval, uaddr, oparg);
 		break;
 	case FUTEX_OP_ADD:
-		__futex_atomic_op("lw %[ov], %[u] \n add %[ov], %[ov], %z[op] \n sw %z[op], 0(%[u])",
+		__futex_atomic_op("lw %[ov], %[u] \n add %[ov], %[ov], %z[op] \n sw %z[op], %[u]",
 				  ret, oldval, uaddr, oparg);
 		break;
 	case FUTEX_OP_OR:
-		__futex_atomic_op("lw %[ov], %[u] \n or %[ov], %[ov], %z[op] \n sw %z[op], 0(%[u])",
+		__futex_atomic_op("lw %[ov], %[u] \n or %[ov], %[ov], %z[op] \n sw %z[op], %[u]",
 				  ret, oldval, uaddr, oparg);
 		break;
 	case FUTEX_OP_ANDN:
-		__futex_atomic_op("lw %[ov], %[u] \n and %[ov], %[ov], %z[op] \n sw %z[op], 0(%[u])",
+		__futex_atomic_op("lw %[ov], %[u] \n and %[ov], %[ov], %z[op] \n sw %z[op], %[u]",
 				  ret, oldval, uaddr, ~oparg);
 		break;
 	case FUTEX_OP_XOR:
-		__futex_atomic_op("lw %[ov], %[u] \n xor %[ov], %[ov], %z[op] \n sw %z[op], 0(%[u])",
+		__futex_atomic_op("lw %[ov], %[u] \n xor %[ov], %[ov], %z[op] \n sw %z[op], %[u]",
 				  ret, oldval, uaddr, oparg);
 		break;
 	default:
@@ -86,7 +86,7 @@ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
 	__enable_user_access();
 	__asm__ __volatile__ (
 	"	lw %[v], %[u]			\n"
-	"	sw %z[nv], 0(%[u])		\n"
+	"	sw %z[nv], %[u]		\n"
 		_ASM_EXTABLE_UACCESS_ERR(1b, 3b, %[r])	\
 		_ASM_EXTABLE_UACCESS_ERR(2b, 3b, %[r])	\
 	: [r] "+r" (ret), [v] "=&r" (val), [u] "+m" (*uaddr), [t] "=&r" (tmp)
