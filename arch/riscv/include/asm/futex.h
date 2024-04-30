@@ -85,8 +85,9 @@ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
 
 	__enable_user_access();
 	__asm__ __volatile__ (
-	"	lw %[v], %[u]			\n"
-	"	sw %z[nv], %[u]		\n"
+	"1:	lw %[v], %[u]			\n"
+	"2:	sw %z[nv], %[u]		\n"
+	"3: 					\n"
 		_ASM_EXTABLE_UACCESS_ERR(1b, 3b, %[r])	\
 		_ASM_EXTABLE_UACCESS_ERR(2b, 3b, %[r])	\
 	: [r] "+r" (ret), [v] "=&r" (val), [u] "+m" (*uaddr), [t] "=&r" (tmp)
