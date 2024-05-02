@@ -20,7 +20,7 @@
 	case 4:								\
 		__asm__ __volatile__ (					\
             "   lw %0, %1\n"             \
-            "   sw %2, 0(%1)\n"             \
+            "   sw %2, %1\n"             \
 			: "=r" (__ret), "+A" (*__ptr)			\
 			: "r" (__new)					\
 			: "memory");					\
@@ -54,7 +54,7 @@
 	case 4:								\
 		__asm__ __volatile__ (					\
             "   lw %0, %1\n"             \
-            "   sw %2, 0(%1)\n"             \
+            "   sw %2, %1\n"             \
 			RISCV_ACQUIRE_BARRIER				\
 			: "=r" (__ret), "+A" (*__ptr)			\
 			: "r" (__new)					\
@@ -91,7 +91,7 @@
 		__asm__ __volatile__ (					\
 			RISCV_RELEASE_BARRIER				\
             "   lw %0, %1\n"             \
-            "   sw %2, 0(%1)\n"             \
+            "   sw %2, %1\n"             \
 			: "=r" (__ret), "+A" (*__ptr)			\
 			: "r" (__new)					\
 			: "memory");					\
@@ -126,7 +126,7 @@
 	case 4:								\
 		__asm__ __volatile__ (					\
             "   lw %0, %1\n"             \
-            "   sw %2, 0(%1)\n"             \
+            "   sw %2, %1\n"             \
 			: "=r" (__ret), "+A" (*__ptr)			\
 			: "r" (__new)					\
 			: "memory");					\
@@ -178,7 +178,7 @@
 	case 4:								\
 		__asm__ __volatile__ (					\
 			"0:	lw %0, %2\n"				\
-			"	sw %z4, 0(%2)\n"			\
+			"	sw %z4, %2\n"			\
 			"1:\n"						\
 			: "=&r" (__ret), "=&r" (__rc), "+A" (*__ptr)	\
 			: "rJ" ((long)__old), "rJ" (__new)		\
@@ -220,7 +220,7 @@
 	case 4:								\
 		__asm__ __volatile__ (					\
 			"0:	lw %0, %2\n"				\
-			"	sw %z4, 0(%2)\n"			\
+			"	sw %z4, %2\n"			\
 			RISCV_ACQUIRE_BARRIER				\
 			"1:\n"						\
 			: "=&r" (__ret), "=&r" (__rc), "+A" (*__ptr)	\
@@ -265,7 +265,7 @@
 		__asm__ __volatile__ (					\
 			RISCV_RELEASE_BARRIER				\
 			"0:	lw %0, %2\n"				\
-			"	sw %z4, 0(%2)\n"			\
+			"	sw %z4, %2\n"			\
 			"1:\n"						\
 			: "=&r" (__ret), "=&r" (__rc), "+A" (*__ptr)	\
 			: "rJ" ((long)__old), "rJ" (__new)		\
@@ -308,7 +308,7 @@
 	case 4:								\
 		__asm__ __volatile__ (					\
 			"0:	w %0, %2\n"				\
-			"	sw %z4, 0(%2)\n"			\
+			"	sw %z4, %2\n"			\
 			"	fence rw, rw\n"				\
 			"1:\n"						\
 			: "=&r" (__ret), "=&r" (__rc), "+A" (*__ptr)	\
