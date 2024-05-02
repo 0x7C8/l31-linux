@@ -55,7 +55,6 @@
 		__asm__ __volatile__ (					\
             "   lw %0, %1\n"             \
             "   sw %2, %1\n"             \
-			RISCV_ACQUIRE_BARRIER				\
 			: "=r" (__ret), "+A" (*__ptr)			\
 			: "r" (__new)					\
 			: "memory");					\
@@ -89,7 +88,6 @@
 	switch (size) {							\
 	case 4:								\
 		__asm__ __volatile__ (					\
-			RISCV_RELEASE_BARRIER				\
             "   lw %0, %1\n"             \
             "   sw %2, %1\n"             \
 			: "=r" (__ret), "+A" (*__ptr)			\
@@ -221,7 +219,6 @@
 		__asm__ __volatile__ (					\
 			"0:	lw %0, %2\n"				\
 			"	sw %z4, %2\n"			\
-			RISCV_ACQUIRE_BARRIER				\
 			"1:\n"						\
 			: "=&r" (__ret), "=&r" (__rc), "+A" (*__ptr)	\
 			: "rJ" ((long)__old), "rJ" (__new)		\
@@ -263,7 +260,6 @@
 	switch (size) {							\
 	case 4:								\
 		__asm__ __volatile__ (					\
-			RISCV_RELEASE_BARRIER				\
 			"0:	lw %0, %2\n"				\
 			"	sw %z4, %2\n"			\
 			"1:\n"						\
