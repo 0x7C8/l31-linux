@@ -307,7 +307,7 @@
 	switch (size) {							\
 	case 4:								\
 		__asm__ __volatile__ (					\
-			"0:	w %0, %2\n"				\
+			"0:	lw %0, %2\n"				\
 			"	sw %z4, %2\n"			\
 			"	fence rw, rw\n"				\
 			"1:\n"						\
